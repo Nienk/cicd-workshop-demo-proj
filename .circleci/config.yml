@@ -6,10 +6,15 @@ jobs:
     - image: circleci/openjdk:8u181-jdk-node-browsers-legacy
     steps:
     - checkout
-    - run: ./gradlew build deployHeroku
+    - run: ./gradlew build
   deploy:
     steps:
-    - checkout
     - run:
         name: Deploy Master to Heroku
         command: ./gradlew deployHeroku
+workflows:
+  version: 2
+  build:
+    jobs:
+    - build
+    - deploy
