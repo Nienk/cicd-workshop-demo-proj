@@ -35,6 +35,6 @@ public class HelloControllerTest {
                 get("/hello/jcore")
                         .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message", equalTo("Hello jcore! How are you?")));
+                .andExpect(jsonPath("$.message", equalTo("Hello jcore! Whatsup?")));
     }
 }
