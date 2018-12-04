@@ -10,10 +10,11 @@ jobs:
   deploy:
     machine:
       enabled: true
-    step:
+    steps:
     - run:
         name: Deploy Master to Heroku
         command: ./gradlew deployHeroku
+    - run: echo 'finito'
   workflows:
     version: 2
     build-and-deploy:
