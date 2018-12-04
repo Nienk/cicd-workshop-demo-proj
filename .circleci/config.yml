@@ -8,13 +8,17 @@ jobs:
     - checkout
     - run: ./gradlew build
   deploy:
+    machine:
+      enabled: true
     steps:
     - run:
         name: Deploy Master to Heroku
         command: ./gradlew deployHeroku
-workflows:
-  version: 2
-  build:
-    jobs:
-    - build
-    - deploy
+  workflows:
+    version: 2
+    build-and-deploy:
+      jobs:
+      - build
+      - deploy:
+          requires:
+          - build
