@@ -1,4 +1,4 @@
- buildscript {
+buildscript {
     ext {
         springBootVersion = '2.0.2.RELEASE'
     }
@@ -12,6 +12,7 @@
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath('com.moowork.gradle:gradle-node-plugin:1.2.0')
         classpath('io.franzbecker:gradle-lombok:1.14')
+        classpath('gradle.plugin.com.heroku.sdk:heroku-gradle:1.0.4')
     }
 }
 
@@ -21,6 +22,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'com.moowork.node'
 apply plugin: 'io.franzbecker.gradle-lombok'
+apply plugin: 'com.heroku.sdk.heroku-gradle'
 
 
 group = 'com.jcore.cicd'
@@ -31,49 +33,53 @@ repositories {
     mavenCentral()
 }
 
-
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
     compileOnly('org.projectlombok:lombok:1.18.0')
     testCompile('org.springframework.boot:spring-boot-starter-test')
+
 }
 
 ext {
     frontendDir = "$projectDir/src/main/webapp"
 }
- processResources {
-     dependsOn "frontendCopy"
- }
+processResources {
+    dependsOn "frontendCopy"
+}
 
- task buildAngular(type: NpmTask) {
-     dependsOn "installAngular"
+heroku {
+    appName = 'nameless-meadow-87188'
+}
 
-     // Set input and output so Gradle can
-     // determine if task is up-to-date.
-     inputs.dir "${frontendDir}/e2e"
-     inputs.dir "${frontendDir}/src"
-     inputs.dir "${frontendDir}/node_modules"
-     outputs.dir "${frontendDir}/dist"
+task buildAngular(type: NpmTask) {
+    dependsOn "installAngular"
 
-     args = ['run-script', 'build']
-     execOverrides {
-         it.workingDir "$frontendDir"
-     }
- }
+    // Set input and output so Gradle can
+    // determine if task is up-to-date.
+    inputs.dir "${frontendDir}/e2e"
+    inputs.dir "${frontendDir}/src"
+    inputs.dir "${frontendDir}/node_modules"
+    outputs.dir "${frontendDir}/dist"
 
- task installAngular(type: NpmTask) {
-     // Set input and output so Gradle can
-     // determine if task is up-to-date.
-     inputs.file "${frontendDir}/package.json"
-     outputs.dir "${frontendDir}/node_modules"
+    args = ['run-script', 'build']
+    execOverrides {
+        it.workingDir "$frontendDir"
+    }
+}
 
-     args = ['install']
-     execOverrides {
-         it.workingDir "$frontendDir"
-     }
- }
+task installAngular(type: NpmTask) {
+    // Set input and output so Gradle can
+    // determine if task is up-to-date.
+    inputs.file "${frontendDir}/package.json"
+    outputs.dir "${frontendDir}/node_modules"
 
- task frontendCopy(type: Copy) {
-     from buildAngular
-     into "${sourceSets.main.output.resourcesDir}/static"
- }
+    args = ['install']
+    execOverrides {
+        it.workingDir "$frontendDir"
+    }
+}
+
+task frontendCopy(type: Copy) {
+    from buildAngular
+    into "${sourceSets.main.output.resourcesDir}/static"
+}
