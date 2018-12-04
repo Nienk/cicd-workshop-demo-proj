@@ -7,8 +7,8 @@ jobs:
     steps:
     - checkout
     - run: ./gradlew build deployHeroku
-  workflows:
-    version: 2
-    build-and-deploy:
-      jobs:
-      - build
+workflows:
+  version: 2
+  build:
+    jobs:
+    - build
