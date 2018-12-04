@@ -12,7 +12,7 @@ public class HelloController {
     public ResponseEntity<HelloReponse> sayHello(@PathVariable("name") String name) {
         return ResponseEntity.ok(
                 HelloReponse.builder()
-                        .message("Hello " + name + "! How are you?")
+                        .message("Hello " + name + "! Whatsup?")
                         .build()
         );
     }
